@@ -1,0 +1,21 @@
+{
+	"name": "oklab-klimawidget",
+	"version": "1.1.0",
+	"description": "build javascript and css",
+	"author": "Steffen Peschel",
+	"main": "webpack.config.js",
+	"scripts": {
+		"build": "wp-scripts build",
+		"start": "wp-scripts start",
+		"makepot": "wp i18n make-pot ./ ./languages/oklab-klimawidget.pot --domain=oklab-klimawidget --exclude='.vscode,.dist,.docs,.language,.node_modules,.vendor,package.json'",
+		"po2json": "po2json ./languages/oklab-klimawidget-de_DE.po ./languages/oklab-klimawidget-de_DE-oklab-klimawidget-block-admin-script.json -f jed"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^26.5.0",
+		"po2json": "github:mikeedwards/po2json"
+	},
+	"dependencies": {
+		"chart.js": "^4.4.2",
+		"react-chartjs-2": "^5.2.0"
+	}
+}

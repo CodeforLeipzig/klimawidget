@@ -1,0 +1,18 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "oklab-blocks/klimawidget",
+	"title": "Klimawidget",
+	"category": "media",
+	"description": "Climate Data Visualization",
+	"keywords": ["climate", "data", "graph"],
+	"textdomain": "oklab-klimawidget",
+	"attributes": {
+		"layout": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"html": false
+	}
+}
