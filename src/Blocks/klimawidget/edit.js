@@ -1,6 +1,7 @@
 // external dependecies
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { useState, useEffect } from "react";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -14,6 +15,7 @@ import { PanelBody, PanelRow, ButtonGroup, Button, TextControl, SelectControl, S
 
 function Edit({ attributes, setAttributes }) {
 	const { title } = attributes;
+	const [titleValue, setTitleValue] = useState(title ? title : "Chart.js Bar Chart");
 
 	const options = {
 		responsive: true,
@@ -37,16 +39,18 @@ function Edit({ attributes, setAttributes }) {
 				label: "Dataset 1",
 				data: [542, 234, 233, 689, 213, 111, 978, 623],
 				backgroundColor: "rgba(255, 99, 132, 0.5)",
-			},
-			{
-				label: "Dataset 2",
-				data: [542, 234, 672, 232, 999, 345, 123, 43],
-				backgroundColor: "rgba(53, 162, 235, 0.5)",
-			},
+			}
 		],
 	};
 
 	const blockProps = useBlockProps();
+
+	useEffect(() => {
+		setAttributes({
+			...attributes,
+			title: titleValue,
+		})
+	}, [titleValue]);
 
 	return (
 		<>
@@ -55,8 +59,8 @@ function Edit({ attributes, setAttributes }) {
 					<TextControl
 						label={__("Chart Title", "oklab-klimawidget")}
 						type="string"
-						value={title}
-						onChange={(value) => setAttributes({ title: value })}
+						value={titleValue}
+						onChange={(value) => setTitleValue(value)}
 					/>
 				</PanelBody>
 			</InspectorControls>

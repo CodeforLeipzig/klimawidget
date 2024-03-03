@@ -25,15 +25,17 @@ import Chart from "chart.js/auto";
 	}
 
 	function updateData(chart, data) {
-		console.log(data);
+		console.log("update data: " + JSON.stringify(data, null, 2));
 		const results = data ? data.results : [];
-		const newLabels = results.map((entry) => entry.date);
-		const newEntries = results.map((entry) => entry.aggregate);
+		const newLabels = results.map(entry => "" + entry.date);
+		const newDatasets = [{
+				label: "Dataset 1",
+				data: results.map(entry => entry.aggregate),
+				backgroundColor: "rgba(255, 99, 132, 0.5)",
+		}];
 
 		chart.data.labels = newLabels;
-		chart.data.datasets.forEach((dataset) => {
-			dataset.data = newEntries;
-		});
+		chart.data.datasets = newDatasets;
 		console.log(chart.data);
 		chart.update();
 	}
