@@ -9,8 +9,12 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
  */
 import { __ } from "@wordpress/i18n";
 import { useBlockProps } from "@wordpress/block-editor";
+import { InspectorControls } from "@wordpress/block-editor";
+import { PanelBody, PanelRow, ButtonGroup, Button, TextControl, SelectControl, SVG, Path } from "@wordpress/components";
 
-function Edit() {
+function Edit({ attributes, setAttributes }) {
+	const { title } = attributes;
+
 	const options = {
 		responsive: true,
 		plugins: {
@@ -19,7 +23,7 @@ function Edit() {
 			},
 			title: {
 				display: true,
-				text: "Chart.js Bar Chart",
+				text: title ? title : "Chart.js Bar Chart",
 			},
 		},
 	};
@@ -45,9 +49,21 @@ function Edit() {
 	const blockProps = useBlockProps();
 
 	return (
-		<div {...blockProps}>
-			<Bar options={options} data={data} />
-		</div>
+		<>
+			<InspectorControls>
+				<PanelBody title={__("Chart Settings", "oklab-klimawidget")}>
+					<TextControl
+						label={__("Chart Title", "oklab-klimawidget")}
+						type="string"
+						value={title}
+						onChange={(value) => setAttributes({ title: value })}
+					/>
+				</PanelBody>
+			</InspectorControls>
+			<div {...blockProps}>
+				<Bar options={options} data={data} />
+			</div>
+		</>
 	);
 }
 
