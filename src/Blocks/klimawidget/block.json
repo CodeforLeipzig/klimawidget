@@ -1,6 +1,6 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
-	"apiVersion": 2,
+	"apiVersion": 2, 
 	"name": "oklab-blocks/klimawidget",
 	"title": "Klimawidget",
 	"category": "media",
@@ -13,6 +13,10 @@
 		},
 		"title": {
 			"type": "string"
+		},
+		"datasetOptions": {
+			"type": "array",
+			"default": [{"label": "Solar Power", "property": "GROSS_POWER", "energySource": "WIND", "interval": "YEAR", "backgroundColor": "rgba(255, 99, 132, 0.5)"}]
 		}
 
 	},

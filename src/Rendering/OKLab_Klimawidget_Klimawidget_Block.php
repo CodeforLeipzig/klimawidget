@@ -28,13 +28,16 @@ class OKLab_Klimawidget_Klimawidget_Block {
 
 	public function rendering( $attributes, $content ) {
 
+		$title = $attributes['title'];
+
 		$json = new \stdClass();
 
 		$options                  = new \stdClass();
 		$options->responsive      = true;
 		$options->legend_position = 'top';
 		$options->title_display   = true;
-		$options->title_text      = 'Chart.js Bar Chart';
+		$options->title_text      = ! empty( $title ) ? $title : 'Chart.js Bar Chart';
+		// $options->title_text = 'Chart.js Bar Chart';
 
 		$labels = array();
 

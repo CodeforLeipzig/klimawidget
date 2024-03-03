@@ -47,6 +47,19 @@ import Chart from "chart.js/auto";
 			const opt = window[uid];
 			console.log(opt);
 
+			const options = {
+				responsive: true,
+				plugins: {
+					legend: {
+						position: "top",
+					},
+					title: {
+						display: true,
+						text: opt?.options?.title_text ? opt.options.title_text : "Chart.js Bar Chart",
+					},
+				},
+			};
+
 			if (ctx) {
 				const chart = new Chart(ctx, {
 					type: "bar",
@@ -54,7 +67,7 @@ import Chart from "chart.js/auto";
 						labels: opt.labels,
 						datasets: opt.datasets,
 					},
-					options: opt.options,
+					options: options,
 				});
 
 				getData(chart);

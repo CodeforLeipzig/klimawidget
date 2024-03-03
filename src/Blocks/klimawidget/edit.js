@@ -1,7 +1,6 @@
 // external dependecies
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { useState, useEffect } from "react";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -9,13 +8,24 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
  * WordPress dependencies
  */
 import { __ } from "@wordpress/i18n";
+import apiFetch from "@wordpress/api-fetch";
+import { useEffect, useState, useMemo, useRef } from "@wordpress/element";
 import { useBlockProps } from "@wordpress/block-editor";
 import { InspectorControls } from "@wordpress/block-editor";
 import { PanelBody, PanelRow, ButtonGroup, Button, TextControl, SelectControl, SVG, Path } from "@wordpress/components";
 
 function Edit({ attributes, setAttributes }) {
-	const { title } = attributes;
+	const { title, datasetOptions } = attributes;
 	const [titleValue, setTitleValue] = useState(title ? title : "Chart.js Bar Chart");
+	const [labels, setLabels] = useState([]);
+	const [datasets, setDatasets] = useState([]);
+
+	const [apiResults, setApiResults] = useState({});
+
+	useEffect(() => {
+		setLabels(["2020", "2021", "2022", "2023", "2024"]);
+		setDatasets([{ label: "Wind Power", data: [100, 200, 440, 555, 777] }]);
+	}, []);
 
 	const options = {
 		responsive: true,
@@ -30,17 +40,9 @@ function Edit({ attributes, setAttributes }) {
 		},
 	};
 
-	const labels = ["January", "February", "March", "April", "May", "June", "July"];
-
 	const data = {
 		labels,
-		datasets: [
-			{
-				label: "Dataset 1",
-				data: [542, 234, 233, 689, 213, 111, 978, 623],
-				backgroundColor: "rgba(255, 99, 132, 0.5)",
-			}
-		],
+		datasets: datasets,
 	};
 
 	const blockProps = useBlockProps();
