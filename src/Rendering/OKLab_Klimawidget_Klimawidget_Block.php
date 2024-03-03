@@ -36,21 +36,16 @@ class OKLab_Klimawidget_Klimawidget_Block {
 		$options->title_display   = true;
 		$options->title_text      = 'Chart.js Bar Chart';
 
-		$labels = array( 'January', 'February', 'March', 'April', 'May', 'June', 'July' );
+		$labels = array();
 
 		$dataset1                   = new \stdClass();
 		$dataset1->label            = 'Dataset 1';
-		$dataset1->data             = array( 542, 234, 233, 689, 213, 111, 978, 623 );
+		$dataset1->data             = array();
 		$dataset1->background_color = 'rgba(255, 99, 132, 0.5)';
-
-		$dataset2                   = new \stdClass();
-		$dataset2->label            = 'Dataset 1';
-		$dataset2->data             = array( 542, 234, 672, 232, 999, 345, 123, 43 );
-		$dataset2->background_color = 'rgba(53, 162, 235, 0.5)';
 
 		$json->options  = $options;
 		$json->labels   = $labels;
-		$json->datasets = array( $dataset1, $dataset2 );
+		$json->datasets = array( $dataset1 );
 
 		$uid = wp_unique_id( 'oklab_klimawidget_' );
 

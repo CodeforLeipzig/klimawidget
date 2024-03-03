@@ -10,6 +10,10 @@ Editor Blocks:
 
 ## Version History:
 
+### 2023-03-03 Version 0.2.0
+
+- init API Data Request
+
 ### 2023-03-02 Version 0.1.0
 
 - init wordpress plugin

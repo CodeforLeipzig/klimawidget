@@ -103,6 +103,14 @@ class OKLab_Klimawidget_Register_Blocks {
 			$widget_script_asset['version'],
 			true
 		);
+
+		wp_localize_script(
+			$this->plugin_name . '-klimawidget-script',
+			'oklabKlimawidgetGlobal', // Array containing dynamic data for a JS Global.
+			array(
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			),
+		);
 	}
 
 	/**

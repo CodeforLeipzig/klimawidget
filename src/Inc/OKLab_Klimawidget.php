@@ -6,6 +6,7 @@ use OKLab_Klimawidget\Inc\OKLab_Klimawidget_Loader;
 use OKLab_Klimawidget\Inc\OKLab_Klimawidget_i18n;
 use OKLab_Klimawidget\Init\OKLab_Klimawidget_Init;
 use OKLab_Klimawidget\Admin\OKLab_Klimawidget_Admin;
+use OKLab_Klimawidget\Ajax\OKLab_Klimawidget_Get_Data;
 use OKLab_Klimawidget\Blocks\OKLab_Klimawidget_Register_Blocks;
 use OKLab_Klimawidget\Frontend\OKLab_Klimawidget_Frontend;
 
@@ -67,6 +68,7 @@ class OKLab_Klimawidget {
 		$this->set_locale();
 		$this->define_init_hooks();
 		$this->define_admin_hooks();
+		$this->define_ajax_hooks();
 		$this->define_frontend_hooks();
 		$this->define_blocks();
 	}
@@ -139,6 +141,18 @@ class OKLab_Klimawidget {
 		// $plugin_admin = new OKLab_Klimawidget_Admin( $this->get_plugin_name(), $this->get_version() );
 		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+	}
+	/**
+	 * Register all of the hooks related to the admin area functionality
+	 * of the plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_ajax_hooks() {
+		$plugin_ajax = new OKLab_Klimawidget_Get_Data();
+		$this->loader->add_action( 'wp_ajax_oklab_klimadata', $plugin_ajax, 'get' );
+		$this->loader->add_action( 'wp_ajax_nopriv_oklab_klimadata', $plugin_ajax, 'get' );
 	}
 	/**
 	 * Register all of the hooks related to the public-facing functionality
