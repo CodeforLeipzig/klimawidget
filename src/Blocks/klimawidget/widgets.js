@@ -4,39 +4,58 @@ import Chart from "chart.js/auto";
 (() => {
 	const widgets = document.querySelectorAll(".klimawidget");
 
+	function formatDataLabel(label) {
+		switch (label) {
+			case "WIND":
+				label = "Zubau Windkraftanlagen";
+				break;
+			case "SOLAR_POWER":
+				label = "Zubau Photovoltaik";
+				break;
+
+			default:
+				break;
+		}
+		return label;
+	}
+
 	function getData(chart) {
-		const xmlhttp = new XMLHttpRequest();
-		const formData = new FormData();
-		formData.append("action", "oklab_klimadata");
+		const req = new XMLHttpRequest();
 
-		// if (typeof search !== "undefined") {
-		// 	formData.append("search", search);
-		// }
+		const dataApiBase = oklabKlimawidgetGlobal.data_api_base;
+		const bundesland = "sachsen";
 
-		xmlhttp.onreadystatechange = function () {
+		let url = dataApiBase + "/" + bundesland;
+
+		req.onreadystatechange = function () {
 			if (this.readyState == 4 && this.status == 200) {
 				const data = JSON.parse(this.responseText);
 				updateData(chart, data);
 			}
 		};
 
-		xmlhttp.open("POST", oklabKlimawidgetGlobal.ajaxurl);
-		xmlhttp.send(formData);
+		req.open("GET", url);
+		req.send();
 	}
 
 	function updateData(chart, data) {
-		console.log("update data: " + JSON.stringify(data, null, 2));
+		// console.log("update data: " + JSON.stringify(data, null, 2));
 		const results = data ? data.results : [];
-		const newLabels = results.map(entry => "" + entry.date);
-		const newDatasets = [{
-				label: "Dataset 1",
-				data: results.map(entry => entry.aggregate),
-				backgroundColor: "rgba(255, 99, 132, 0.5)",
-		}];
+		const xLabels = results.map((entry) => entry.date);
+		const dataLabel = formatDataLabel(data ? data.energySource : "");
 
-		chart.data.labels = newLabels;
+		const newDatasets = [
+			...chart.data.datasets,
+			{
+				label: dataLabel,
+				data: results.map((entry) => entry.aggregate),
+				backgroundColor: "rgba(255, 99, 132, 0.5)",
+			},
+		];
+
+		chart.data.labels = xLabels;
 		chart.data.datasets = newDatasets;
-		console.log(chart.data);
+		// console.log(chart.data);
 		chart.update();
 	}
 
@@ -45,17 +64,41 @@ import Chart from "chart.js/auto";
 			const uid = widget.dataset.uid;
 			const ctx = document.getElementById(uid);
 			const opt = window[uid];
-			console.log(opt);
+			// console.log(opt);
 
 			const options = {
 				responsive: true,
+				scales: {
+					y: {
+						ticks: {
+							callback: function (value, index, ticks) {
+								return value / 1000 + " MW";
+							},
+						},
+					},
+				},
 				plugins: {
 					legend: {
-						position: "top",
+						position: "bottom",
 					},
 					title: {
 						display: true,
-						text: opt?.options?.title_text ? opt.options.title_text : "Chart.js Bar Chart",
+						text: opt?.options?.title_text,
+					},
+					tooltip: {
+						callbacks: {
+							label: function (context) {
+								let label = " " + context.dataset.label || "";
+
+								if (label) {
+									label += ": ";
+								}
+								if (context.parsed.y !== null) {
+									label += (Number.parseFloat(context.parsed.y) / 1000).toFixed(1) + " MW";
+								}
+								return label;
+							},
+						},
 					},
 				},
 			};
@@ -64,8 +107,7 @@ import Chart from "chart.js/auto";
 				const chart = new Chart(ctx, {
 					type: "bar",
 					data: {
-						labels: opt.labels,
-						datasets: opt.datasets,
+						datasets: [],
 					},
 					options: options,
 				});

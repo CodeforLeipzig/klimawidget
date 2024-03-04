@@ -16,7 +16,7 @@
 		},
 		"datasetOptions": {
 			"type": "array",
-			"default": [{"label": "Solar Power", "property": "GROSS_POWER", "energySource": "WIND", "interval": "YEAR", "backgroundColor": "rgba(255, 99, 132, 0.5)"}]
+			"default": [{"label": "Solar Power", "property": "GROSS_POWER", "energySource": "SOLAR_POWER", "interval": "YEAR", "backgroundColor": "rgba(255, 99, 132, 0.5)"}]
 		}
 
 	},

@@ -108,7 +108,7 @@ class OKLab_Klimawidget_Register_Blocks {
 			$this->plugin_name . '-klimawidget-script',
 			'oklabKlimawidgetGlobal', // Array containing dynamic data for a JS Global.
 			array(
-				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				'data_api_base' => get_rest_url( null, 'oklab_climate_data/v1' ),
 			),
 		);
 	}

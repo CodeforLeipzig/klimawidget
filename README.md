@@ -10,6 +10,12 @@ Editor Blocks:
 
 ## Version History:
 
+### xxx
+
+- removed: wp-ajax Endpoint
+- added: Rest API Endpoints
+- Diagram with real data now in backend and frontend
+
 ### 2023-03-03 Version 0.2.0
 
 - init API Data Request
