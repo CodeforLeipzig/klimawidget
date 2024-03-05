@@ -19,13 +19,21 @@ import Chart from "chart.js/auto";
 		return label;
 	}
 
-	function getData(chart) {
+	function getData(chart, energySource, interval) {
 		const req = new XMLHttpRequest();
 
 		const dataApiBase = oklabKlimawidgetGlobal.data_api_base;
 		const bundesland = "sachsen";
 
 		let url = dataApiBase + "/" + bundesland;
+
+		if (energySource) {
+			url += "/" + energySource;
+		}
+
+		if (interval) {
+			url += "/" + interval;
+		}
 
 		req.onreadystatechange = function () {
 			if (this.readyState == 4 && this.status == 200) {
@@ -44,17 +52,14 @@ import Chart from "chart.js/auto";
 		const xLabels = results.map((entry) => entry.date);
 		const dataLabel = formatDataLabel(data ? data.energySource : "");
 
-		const newDatasets = [
-			...chart.data.datasets,
+		chart.data.labels = xLabels;
+		chart.data.datasets = [
 			{
 				label: dataLabel,
 				data: results.map((entry) => entry.aggregate),
 				backgroundColor: "rgba(255, 99, 132, 0.5)",
 			},
 		];
-
-		chart.data.labels = xLabels;
-		chart.data.datasets = newDatasets;
 		// console.log(chart.data);
 		chart.update();
 	}
@@ -64,7 +69,22 @@ import Chart from "chart.js/auto";
 			const uid = widget.dataset.uid;
 			const ctx = document.getElementById(uid);
 			const opt = window[uid];
-			// console.log(opt);
+			console.log(opt);
+			const propery = opt.propery;
+			const energySource = opt.energy_source;
+			const interval = opt.interval;
+
+			const data = {
+				labels: opt?.labels,
+				datasets: [
+					{
+						label: formatDataLabel(opt.dataset1.label),
+						data: opt.dataset1.data,
+						backgroundColor: opt.dataset1.background_color,
+					},
+				],
+			};
+			console.log(data);
 
 			const options = {
 				responsive: true,
@@ -106,13 +126,11 @@ import Chart from "chart.js/auto";
 			if (ctx) {
 				const chart = new Chart(ctx, {
 					type: "bar",
-					data: {
-						datasets: [],
-					},
+					data: data,
 					options: options,
 				});
 
-				getData(chart);
+				getData(chart, energySource, interval);
 			}
 		});
 	}

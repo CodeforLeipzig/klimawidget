@@ -12,6 +12,8 @@ Editor Blocks:
 
 ### xxx
 
+- added Option Interval
+- added Option Energy Source
 - removed: wp-ajax Endpoint
 - added: Rest API Endpoints
 - Diagram with real data now in backend and frontend

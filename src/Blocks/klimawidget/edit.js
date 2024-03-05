@@ -10,8 +10,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
  */
 import { __ } from "@wordpress/i18n";
 import apiFetch from "@wordpress/api-fetch";
-import { addQueryArgs } from "@wordpress/url";
-import { useEffect, useState, useMemo, useRef } from "@wordpress/element";
+import { useEffect, useState } from "@wordpress/element";
 import { useBlockProps } from "@wordpress/block-editor";
 import { InspectorControls } from "@wordpress/block-editor";
 import { PanelBody, PanelRow, ButtonGroup, Button, TextControl, SelectControl, SVG, Path } from "@wordpress/components";
@@ -33,51 +32,107 @@ function formatDataLabel(label) {
 	return label;
 }
 
+function getApiPath(options) {
+	let path = "";
+	const source = options.energySource;
+	const interval = options.interval;
+
+	if (source) {
+		switch (source) {
+			case "WIND":
+				path += "/wind";
+				break;
+			case "SOLAR_POWER":
+				path += "/solar_power";
+				break;
+		}
+	}
+
+	if (interval) {
+		switch (interval) {
+			case "YEAR":
+				path += "/year";
+				break;
+			case "MONTH":
+				path += "/month";
+				break;
+			case "WEEK":
+				path += "/week";
+				break;
+		}
+	}
+
+	return path;
+}
+
 function Edit({ attributes, setAttributes }) {
-	const { title, datasetOptions } = attributes;
+	const { title, dataset, datasetOptions } = attributes;
 	const [labels, setLabels] = useState([]);
 	const [datasets, setDatasets] = useState([]);
-
 	const [apiResults, setApiResults] = useState({});
 
+	function setDataset(label, data, x) {
+		const newDataset = { label: label, data: data, x: x };
+		setAttributes({ dataset: newDataset });
+	}
+
 	useEffect(() => {
-		if (datasetOptions && Array.isArray(datasetOptions) && datasetOptions.length > 0) {
-			const newLabels = [];
-			const newDatasets = [];
-
-			datasetOptions.map((options) => {
-				const reqHash = hash({
-					property: options.property,
-					energySource: options.energySource,
-					interval: options.interval,
-				});
-
-				if (typeof apiResults[reqHash] === "undefined") {
-					apiFetch({
-						path: dataApiBase,
-						method: "GET",
-					}).then((res) => {
-						console.log(res);
-						const results = res?.results || [];
-						const xLabels = results.map((entry) => entry.date);
-						const dataLabel = formatDataLabel(res ? res.energySource : "");
-
-						const newDatasets = [
-							{
-								label: dataLabel,
-								data: results.map((entry) => entry.aggregate),
-								backgroundColor: "rgba(255, 99, 132, 0.5)",
-							},
-						];
-
-						setLabels(xLabels);
-						setDatasets(newDatasets);
-					});
-				}
+		if (datasetOptions) {
+			const reqHash = hash({
+				property: datasetOptions.property,
+				energySource: datasetOptions.energySource,
+				interval: datasetOptions.interval,
 			});
+
+			if (typeof apiResults[reqHash] === "undefined") {
+				apiFetch({
+					path: dataApiBase + getApiPath(datasetOptions),
+					method: "GET",
+				}).then((res) => {
+					const results = res?.results || [];
+					const xLabels = results.map((entry) => entry.date);
+					const dataLabel = formatDataLabel(res?.energySource);
+					const data = results.map((entry) => entry.aggregate);
+
+					const newDatasets = {
+						label: dataLabel,
+						data: data,
+						backgroundColor: datasetOptions.backgroundColor,
+					};
+
+					setDataset(dataLabel, data, xLabels);
+					setLabels(xLabels);
+					setDatasets([newDatasets]);
+					setApiResults({ ...apiResults, [reqHash]: res });
+				});
+			} else {
+				const results = apiResults[reqHash].results;
+				const xLabels = results.map((entry) => entry.date);
+				const dataLabel = formatDataLabel(apiResults[reqHash]?.energySource);
+				const data = results.map((entry) => entry.aggregate);
+
+				const newDatasets = {
+					label: dataLabel,
+					data: data,
+					backgroundColor: datasetOptions.backgroundColor,
+				};
+
+				setDataset(dataLabel, data, xLabels);
+				setLabels(xLabels);
+				setDatasets([newDatasets]);
+			}
 		}
-		// setDatasets();
 	}, [datasetOptions]);
+
+	function setIntervalValue(value) {
+		const newDatasetOptions = { ...datasetOptions, interval: value };
+		setAttributes({ datasetOptions: newDatasetOptions });
+	}
+
+	function onChangeEnergySourceValue(value) {
+		const newDatasetOptions = { ...datasetOptions, energySource: value };
+		setAttributes({ datasetOptions: newDatasetOptions });
+	}
 
 	const options = {
 		responsive: true,
@@ -132,6 +187,30 @@ function Edit({ attributes, setAttributes }) {
 						type="string"
 						value={title}
 						onChange={(value) => setAttributes({ title: value })}
+					/>
+				</PanelBody>
+				<PanelBody title={__("Dataset Option", "oklab-klimawidget")}>
+					<h4>Interval</h4>
+					<ButtonGroup>
+						<Button variant={datasetOptions?.interval === "YEAR" ? "primary" : "secondary"} onClick={() => setIntervalValue("YEAR")}>
+							Year
+						</Button>
+						<Button variant={datasetOptions?.interval === "MONTH" ? "primary" : "secondary"} onClick={() => setIntervalValue("MONTH")}>
+							Month
+						</Button>
+						<Button variant={datasetOptions?.interval === "WEEK" ? "primary" : "secondary"} onClick={() => setIntervalValue("WEEK")}>
+							Week
+						</Button>
+					</ButtonGroup>
+					<SelectControl
+						label={__("Energy Source", "oklab-klimawidget")}
+						className="oklab-select-energy-source"
+						value={datasetOptions?.energySource}
+						options={[
+							{ label: "Windkraft", value: "WIND" },
+							{ label: "Photovoltaik", value: "SOLAR_POWER" },
+						]}
+						onChange={onChangeEnergySourceValue}
 					/>
 				</PanelBody>
 			</InspectorControls>
