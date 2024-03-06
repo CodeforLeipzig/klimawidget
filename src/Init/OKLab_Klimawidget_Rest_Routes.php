@@ -5,26 +5,24 @@ namespace OKLab_Klimawidget\Init;
 class OKLab_Klimawidget_Rest_Routes extends \WP_REST_Controller {
 	public static $transient_key_base = 'oklab_kw_';
 
-	public static $interval = array( 'YEAR', 'MONTH', 'WEEK' );
+	public static $interval = array( 'year', 'month', 'week' );
 
 	public static $energy_source = array(
-		'WIND',
-		'SOLAR_POWER',
-		'OTHER_GASES',
-		'MINERAL_OIL_PRODUCTS',
-		'STORAGE',
-		'WATER',
-		'SLUDGE',
-		'BIOMASS',
-		'SOLAR_POWER',
-		'NATURAL_GAS',
-		'WIND',
-		'GEOTHERMICS',
-		'MINE_GAS',
-		'SOLAR_THERMICS',
-		'LIGNITE_COAL',
-		'NONE_BIOGENIC_WASTE',
-		'HEAT',
+		'wind',
+		'solar_power',
+		'other_gases',
+		'mineral_oil_products',
+		'storage',
+		'water',
+		'sludge',
+		'biomass',
+		'natural_gas',
+		'geothermics',
+		'mine_gas',
+		'solar_thermics',
+		'lignite_coal',
+		'none_biogenic_waste',
+		'heat',
 	);
 	/**
 	 * Register the routes for the objects of the controller.
@@ -58,8 +56,9 @@ class OKLab_Klimawidget_Rest_Routes extends \WP_REST_Controller {
 					'args'        => array(
 						'source' => array(
 							'validate_callback' => function( $param, $request, $key ) {
-								return in_array( strtoupper( $param ), self::$energy_source, true );
+								return in_array( $param, self::$energy_source, true );
 							},
+							'enum'              => self::$energy_source,
 						),
 					),
 				),
@@ -77,13 +76,15 @@ class OKLab_Klimawidget_Rest_Routes extends \WP_REST_Controller {
 					'args'        => array(
 						'source'   => array(
 							'validate_callback' => function( $param, $request, $key ) {
-								return in_array( strtoupper( $param ), self::$energy_source, true );
+								return in_array( $param, self::$energy_source, true );
 							},
+							'enum'              => self::$energy_source,
 						),
 						'interval' => array(
 							'validate_callback' => function( $param, $request, $key ) {
-								return in_array( strtoupper( $param ), self::$interval, true );
+								return in_array( $param, self::$interval, true );
 							},
+							'enum'              => self::$interval,
 						),
 					),
 				),

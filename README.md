@@ -12,6 +12,7 @@ Editor Blocks:
 
 ### xxx
 
+- added enum values
 - added Option Interval
 - added Option Energy Source
 - removed: wp-ajax Endpoint
